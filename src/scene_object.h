@@ -77,4 +77,17 @@ class Sphere: public ScenePrimitive {
 		}
 };
 
+// TODO: Add more primitives
+class Cube: public ScenePrimitive {
+
+};
+
+class Triangle: public ScenePrimitive {
+
+};
+
+class Rectangle: public ScenePrimitive {
+
+};
+
 #endif
