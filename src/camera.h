@@ -42,7 +42,7 @@ class Camera {
         		for (int x = 0; x < IMG_WIDTH; x++) {
         		    Ray r(origin, lower_left_corner + newVec3({(float) x/IMG_WIDTH * viewport_width, (float) y/IMG_HEIGHT * viewport_height, 0.0}));
         		    
-        		    Vec3 px_color = ray_color(r, world, 0);
+        		    Vec3 px_color = ray_color(r, world, 1);
         		    
         		    //Vec3 px_color = newVec3(float(x)/float(IMG_WIDTH - 1), float(y)/float(IMG_HEIGHT - 1), 0.25);
 		
