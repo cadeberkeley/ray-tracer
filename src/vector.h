@@ -4,9 +4,12 @@
 #include <iostream>
 #include <type_traits>
 #include <math.h>
+#include <cassert>
 
 #define newVec3(f1, f2, f3) Vector<float, 3>({f1, f2, f3})
 #define Vec3 Vector<float, 3>
+
+using namespace std;
 
 template <typename T, size_t N> class Vector {
     
@@ -22,7 +25,7 @@ template <typename T, size_t N> class Vector {
         }
 
         static Vector cross(Vector<T, N> a, Vector<T, N> b) {
-            assert(N == 3, "Cross product only for 3D vectors.");
+            assert(N == 3);
             T cross [3] = { a.elements[1] * b.elements[2] - a.elements[2] * b.elements[1],
                                 a.elements[2] * b.elements[0] - a.elements[0] * b.elements[2],
                                 a.elements[0] * b.elements[1] - a.elements[1] * b.elements[0]
@@ -39,12 +42,12 @@ template <typename T, size_t N> class Vector {
             }
         }
 
-        Vector(T (&from)[N]) {
-            std::copy(std::begin(from), std::end(from), std::begin(elements));
+        Vector(const T (&from)[N]) {
+            std::copy(begin(from), end(from), begin(elements));
         }
 
-        Vector(Vector<T, N> from) {
-            std::copy(from.elements.begin(), from.elements.end(), elements);
+        Vector(const Vector<T, N> &from) {
+            std::copy(begin(from.elements), end(from.elements), begin(elements));
         }
 
         Vector(std::initializer_list<T> elems) {
@@ -145,9 +148,9 @@ template <typename T, size_t N> class Vector {
             return os;
         }
 
-        T& operator[](int i) { return elements[i];  s}
+        T& operator[](int i) { return elements[i]; }
 
-        T operator[] (int i) const {return elements[i];}
+        T operator[] (int i) const { return elements[i]; }
 };
 
 #endif

@@ -12,9 +12,9 @@
 class SceneObject {
 	public:
 		SceneObject() {}
-		virtual float intersect(const Ray& r) const;
-		virtual Vec3 normal_at(const Ray& r) const;
-		virtual Vec3 color_at(const Ray& r) const;
+		virtual float intersect(const Ray& r) const {};
+		virtual Vec3 normal_at(const Ray& r) const {};
+		virtual Vec3 color_at(const Ray& r) const {};
 
 };
 

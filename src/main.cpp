@@ -26,7 +26,7 @@ int main() {
     world.add(new Sphere(1.0, newVec3(0.0, 0.0, 10.0)));
 
     // Render
-    cam.render("Camera_world_test.ppm", world);
+    cam.render("build/Camera_world_test.ppm", world);
     
 
     return 0;
