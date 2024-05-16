@@ -20,7 +20,7 @@ class Ray {
             color = c;
         }
 
-        Vec3 at(float t) {
+        Vec3 at(float t) const {
             return origin + t * dir;
         }
 

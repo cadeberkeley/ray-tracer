@@ -47,10 +47,6 @@ template <typename T, size_t N> class Vector {
             std::copy(from.elements.begin(), from.elements.end(), elements);
         }
 
-        T &operator[](int i) {
-            return elements[i];
-        }
-
         Vector(std::initializer_list<T> elems) {
             int i = 0;
             typename std::initializer_list<T>::iterator it;
@@ -85,6 +81,7 @@ template <typename T, size_t N> class Vector {
             return sum;
         }
         
+        /* Override common mathematical operators */
 
         Vector& operator+=(const Vector<T, N>& other) {
             for (int i = 0; i < N; i++) {
@@ -148,6 +145,9 @@ template <typename T, size_t N> class Vector {
             return os;
         }
 
+        T& operator[](int i) { return elements[i];  s}
+
+        T operator[] (int i) const {return elements[i];}
 };
 
 #endif
