@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef SCENE_OBJECT_H
+#define SCENE_OBJECT_H
 
 #include "vector.h"
 #include "material.h"
@@ -9,21 +9,22 @@
 
 #include <iostream>
 
-class Object {
+class SceneObject {
 	public:
-		Object() {}
-		virtual float intersect(const Ray& r) = 0;
-		virtual Vec3 normal_at(const Ray& r) = 0;
+		SceneObject() {}
+		virtual float intersect(const Ray& r) const;
+		virtual Vec3 normal_at(const Ray& r) const;
+		virtual Vec3 color_at(const Ray& r) const;
 
 };
 
-class ScenePrimitive: public Object {
+
+class ScenePrimitive: public SceneObject {
+	
 
 	public:
         Vec3 position;
-		Material material;
         ScenePrimitive() {}
-        
 
 };
 
@@ -42,7 +43,7 @@ class Sphere: public ScenePrimitive {
 			center = c;
 		}
 
-		virtual float intersect(const Ray& r) override {
+		virtual float intersect(const Ray& r) const override {
 			Vec3 beta = r.origin + center;
 
 			float beta_len_squared = beta.norm_squared();
@@ -66,8 +67,13 @@ class Sphere: public ScenePrimitive {
 			return t1;
 		}
 
-		virtual Vec3 normal_at(const Ray& r) override {
+		virtual Vec3 normal_at(const Ray& r) const override {
 			return (r.at(intersect(r)) - center).normalized();
+		}
+
+		// Normal coloring for now
+		virtual Vec3 color_at(const Ray& r) const override {
+			return normal_at(r);
 		}
 };
 
