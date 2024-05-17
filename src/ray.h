@@ -8,6 +8,12 @@ class Ray {
         Vec3 origin, dir;
         Vec3 color;
 
+        Ray() {
+            origin = Vec3();
+            dir = Vec3();
+            color = Vec3();
+        }
+
         Ray(const Vec3& o, const Vec3& d) {
             origin = o;
             dir = (d-o).normalized();

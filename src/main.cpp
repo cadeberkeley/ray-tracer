@@ -22,7 +22,12 @@ int main() {
         
     // Scene Setup
     World world;
-    world.add(new Sphere(1.0, Vec3(0.0, 0.0, 10.0)));
+
+    Normals normals_mat;
+    Sphere s = Sphere(1.0, Vec3(0.0, 0.0, 10.0));
+    s.set_material(normals_mat);
+    world.add(&s);
+
 
     // Render
     cam.render("build/Camera_world_test.ppm", world);

@@ -23,23 +23,31 @@ template <typename T, size_t N> class Vector {
         }
 
         static T random_value() {
-            return rand() / RAND_MAX;
+            return (T)rand() / (T)RAND_MAX;
         }
 
         static T random_value(T min, T max) {
             return min + (T)rand()/((T)RAND_MAX/(T)(max-min));
         }
 
-        static Vec3 random() {
-            return Vec3(random_value(), random_value(), random_value());
+        static Vector random() {
+            T e[N];
+            for (int i = 0; i < N; i++) {
+                e[i] = random_value();
+            }
+            return Vector(e);
         }
 
-        static Vec3 random(float min, float max) {
-            return Vec3(random_value(min,max), random_value(min,max), random_value(min,max));
+        static Vector random(float min, float max) {
+            T e[N];
+            for (int i = 0; i < N; i++) {
+                e[i] = random_value(min, max);
+            }
+            return Vector(e);
         }
 
-        static Vec3 random_unit_vector() {
-            return Vec3(random_value(), random_value(), random_value()).normalized();
+        static Vector random_unit_vector() {
+            return random().normalized();
         }
     
         T elements [N];
@@ -123,13 +131,6 @@ template <typename T, size_t N> class Vector {
             return *this;
         }
 
-        Vector& operator*=(const T scalar) {
-            for (int i = 0; i < N; i++) {
-                elements[i] *= scalar;
-            }
-            return *this;
-        }
-
         Vector operator*=(const T scalar) {
             for (int i = 0; i < N; i++) {
                 elements[i] *= scalar;
@@ -167,8 +168,6 @@ template <typename T, size_t N> class Vector {
             os << v.elements[N-1] << ")" << std::endl;
             return os;
         }
-
-        T& operator[](int i) { return elements[i]; }
 
         T operator[] (int i) const { return elements[i]; }
 };
@@ -211,7 +210,7 @@ class Vec3 : public Vector<float, 3UL> {
         }       
 
         static Vec3 cross(Vec3 a, Vec3 b) {
-            float cross [3] = { a.elements[1] * b.elements[2] - a.elements[2] * b.elements[1],
+            float cross [3] = { a.elements[1] * b.elements[2] - a.elements[2] * b[1],
                                 a.elements[2] * b.elements[0] - a.elements[0] * b.elements[2],
                                 a.elements[0] * b.elements[1] - a.elements[1] * b.elements[0]
                             };

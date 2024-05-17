@@ -43,8 +43,8 @@ class Camera {
         		    Ray r(origin, lower_left_corner + Vec3((float) x/IMG_WIDTH * viewport_width, (float) y/IMG_HEIGHT * viewport_height, 0.0));
         		    
         		    Vec3 px_color = ray_color(r, world, 1);
-                    if (px_color[0] != 0.5) 
-                        std::cout << px_color << "\n";
+                    //if (px_color[0] != 0.5) 
+                    //    std::cout << px_color << "\n";
         		    
         		    //Vec3 px_color = newVec3(float(x)/float(IMG_WIDTH - 1), float(y)/float(IMG_HEIGHT - 1), 0.25);
 		
@@ -56,17 +56,20 @@ class Camera {
 
     	}
 
-    	Vec3 ray_color(const Ray& r, World& w, int depth) const {
+    	Vec3 ray_color(const Ray& r, World& w, int depth) {
     		if (depth == 0) {
-    			return Vec3(0.0, 0.0, 0.0);
+    			return r.color;
     		}
             const SceneObject* obj_intersect = w.intersect(r);
-            if (obj_intersect != nullptr) {
-                Vec3 color = obj_intersect->color_at(r);
-                Material mat = obj_intersect->get_material();
-                return color;
-            } else {
+			if (obj_intersect == nullptr) {
                 return w.background_color();
+			} else {
+				Ray next;
+				if (obj_intersect->scatter(r, next)) {
+                	return ray_color(next, w, depth - 1);
+				} else {
+					return next.color;
+				}
             }
     	}
 };

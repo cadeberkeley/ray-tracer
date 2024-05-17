@@ -12,11 +12,10 @@
 class SceneObject {
 	public:
 		SceneObject() {}
-		virtual float intersect(const Ray& r) const {};
-		virtual Vec3 normal_at(const Ray& r) const {};
-		virtual Vec3 color_at(const Ray& r) const {};
-		virtual bool scatter(const Ray& inc, Vec3& color, Ray& out) const {};
-		virtual Material get_material() const {};
+		virtual float intersect(const Ray& r) const = 0;
+		virtual Vec3 normal_at(const Ray& r) const = 0;
+		virtual Vec3 color_at(const Ray& r) const = 0;
+		virtual bool scatter(const Ray& inc, Ray& out) const = 0;
 
 };
 
@@ -27,6 +26,8 @@ class ScenePrimitive: public SceneObject {
 	public:
 		Material mat;
         Vec3 position;
+		void set_material(Material m) { mat = m; };
+		Material get_material() const { return mat; };
         ScenePrimitive() {}
 };
 
@@ -38,11 +39,13 @@ class Sphere: public ScenePrimitive {
 		Sphere() {
 			radius = 1.0;
 			center = Vec3(0.0, 0.0, 0.0);
+			mat = Normals();
 		}
 
-		Sphere(float r, const Vec3& c) {
+		Sphere(const float r, const Vec3& c) {
 			radius = r;
 			center = c;
+			mat = Normals();
 		}
 
 		virtual float intersect(const Ray& r) const override {
@@ -78,7 +81,8 @@ class Sphere: public ScenePrimitive {
 			return (normal_at(r) + Vec3(1.0, 1.0, 1.0)) / 2.0;
 		}
 
-		virtual bool scatter(const Ray& inc, Vec3& color, Ray& out) const override {
+		virtual bool scatter(const Ray& inc, Ray& out) const override {
+			mat.scatter(inc, normal_at(inc), out);
 			return true;
 		}
 };
