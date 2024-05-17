@@ -79,11 +79,7 @@ class Sphere: public ScenePrimitive {
 		}
 
 		virtual bool scatter(const Ray& inc, Vec3& color, Ray& out) const override {
-			
-		}
-
-		virtual Material get_material() const override {
-			return mat;
+			return true;
 		}
 };
 

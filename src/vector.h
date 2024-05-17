@@ -4,15 +4,15 @@
 #include <iostream>
 #include <type_traits>
 #include <math.h>
-#include "raytrace_utils.h"
+#include <cstdlib>
 #include <cassert>
 
 using namespace std;
-using namespace float_utils;
 
 template <typename T, size_t N> class Vector {
     
     static_assert(std::is_arithmetic<T>::value, "Not an arithmetic type.");
+
     public:
         static T dot(Vector<T, N> a, Vector<T, N> b) {
             T sum = 0;
@@ -21,13 +21,31 @@ template <typename T, size_t N> class Vector {
             }
             return sum;
         }
+
+        static T random_value() {
+            return rand() / RAND_MAX;
+        }
+
+        static T random_value(T min, T max) {
+            return min + (T)rand()/((T)RAND_MAX/(T)(max-min));
+        }
+
+        static Vec3 random() {
+            return Vec3(random_value(), random_value(), random_value());
+        }
+
+        static Vec3 random(float min, float max) {
+            return Vec3(random_value(min,max), random_value(min,max), random_value(min,max));
+        }
+
+        static Vec3 random_unit_vector() {
+            return Vec3(random_value(), random_value(), random_value()).normalized();
+        }
     
         T elements [N];
 
         Vector() {
-            for (int i=0; i < N; i++) {
-                elements[i] = (T) 0;
-            }
+            fill(elements, elements+N, T(0));
         }
 
         Vector(const T (&from)[N]) {
@@ -112,6 +130,13 @@ template <typename T, size_t N> class Vector {
             return *this;
         }
 
+        Vector operator*=(const T scalar) {
+            for (int i = 0; i < N; i++) {
+                elements[i] *= scalar;
+            }
+            return *this;
+        }
+
         friend Vector operator*(Vector v, const T scalar) {
             v *= scalar;
             return v;
@@ -173,28 +198,16 @@ class Vec3 : public Vector<float, 3UL> {
             return *this;
         }
 
-        Vec3 reflect(const Vec3& inc, const Vec3& normal) {
+        static Vec3 reflected(const Vec3& inc, const Vec3& normal) {
             return inc - 2*dot(inc,normal)*normal;
         }
 
-        static Vec3 random() {
-            return Vec3(random_float(), random_float(), random_float());
-        }
-
-        static Vec3 random(float min, float max) {
-            return Vec3(random_float(min,max), random_float(min,max), random_float(min,max));
-        }
-
-        static Vec3 random_unit_vector() {
-            return Vec3(random_float(), random_float(), random_float()).normalized();
-        }
-
-        Vec3 random_on_hemisphere(const Vec3& normal) {
-            Vec3 on_unit_sphere = random_unit_vector();
-            if (dot(on_unit_sphere, normal) > 0.0)
-                return on_unit_sphere;
+        static Vec3 random_on_hemisphere(const Vec3& normal) {
+            Vec3 unit = random_unit_vector();
+            if (dot(unit, normal) > 0.0)
+                return unit;
             else
-                return -on_unit_sphere;
+                return -unit;
         }       
 
         static Vec3 cross(Vec3 a, Vec3 b) {
