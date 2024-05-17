@@ -1,6 +1,5 @@
 #include "color.h"
 #include "vector.h"
-//#include "vec3.h"
 #include "scene_object.h"
 #include "ray.h"
 #include "camera.h"
@@ -23,7 +22,7 @@ int main() {
         
     // Scene Setup
     World world;
-    world.add(new Sphere(1.0, newVec3(0.0, 0.0, 10.0)));
+    world.add(new Sphere(1.0, Vec3(0.0, 0.0, 10.0)));
 
     // Render
     cam.render("build/Camera_world_test.ppm", world);

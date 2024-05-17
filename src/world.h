@@ -30,7 +30,7 @@ class World {
     	}
     	
     	Vec3 background_color() const {
-    		return newVec3(0.5, 0.5, 0.5);
+    		return Vec3(0.5, 0.5, 0.5);
     	}
 };
 

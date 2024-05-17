@@ -4,17 +4,15 @@
 #include <iostream>
 #include <type_traits>
 #include <math.h>
+#include "raytrace_utils.h"
 #include <cassert>
 
-#define newVec3(f1, f2, f3) Vector<float, 3>({f1, f2, f3})
-#define Vec3 Vector<float, 3>
-
 using namespace std;
+using namespace float_utils;
 
 template <typename T, size_t N> class Vector {
     
     static_assert(std::is_arithmetic<T>::value, "Not an arithmetic type.");
-
     public:
         static T dot(Vector<T, N> a, Vector<T, N> b) {
             T sum = 0;
@@ -23,17 +21,7 @@ template <typename T, size_t N> class Vector {
             }
             return sum;
         }
-
-        static Vector cross(Vector<T, N> a, Vector<T, N> b) {
-            assert(N == 3);
-            T cross [3] = { a.elements[1] * b.elements[2] - a.elements[2] * b.elements[1],
-                                a.elements[2] * b.elements[0] - a.elements[0] * b.elements[2],
-                                a.elements[0] * b.elements[1] - a.elements[1] * b.elements[0]
-                            };
-            return Vector<T, N>(cross);
-        }
-
-    public:
+    
         T elements [N];
 
         Vector() {
@@ -110,6 +98,13 @@ template <typename T, size_t N> class Vector {
             return a;
         }
 
+        Vector operator-() {
+            for (int i = 0; i < N; i++) {
+                elements[i] *= -1;
+            }
+            return *this;
+        }
+
         Vector& operator*=(const T scalar) {
             for (int i = 0; i < N; i++) {
                 elements[i] *= scalar;
@@ -151,6 +146,65 @@ template <typename T, size_t N> class Vector {
         T& operator[](int i) { return elements[i]; }
 
         T operator[] (int i) const { return elements[i]; }
+};
+
+class Vec3 : public Vector<float, 3UL> {
+    public:
+        Vec3(float f0, float f1, float f2) {
+            elements[0] = f0;
+            elements[1] = f1;
+            elements[2] = f2;
+        }
+
+        Vec3(const float (&from)[3]) {
+            std::copy(begin(from), end(from), begin(elements));
+        }
+
+        Vec3() : Vec3(0.0, 0.0, 0.0) {}
+
+        Vec3(const Vector<float, 3UL>& vec) {
+            copy(begin(vec.elements), end(vec.elements), begin(elements));
+        }
+
+        Vec3& operator=(const Vector<float, 3UL>& vec) {
+            if (this != &vec) {
+                copy(begin(vec.elements), end(vec.elements), begin(elements));
+            }
+            return *this;
+        }
+
+        Vec3 reflect(const Vec3& inc, const Vec3& normal) {
+            return inc - 2*dot(inc,normal)*normal;
+        }
+
+        static Vec3 random() {
+            return Vec3(random_float(), random_float(), random_float());
+        }
+
+        static Vec3 random(float min, float max) {
+            return Vec3(random_float(min,max), random_float(min,max), random_float(min,max));
+        }
+
+        static Vec3 random_unit_vector() {
+            return Vec3(random_float(), random_float(), random_float()).normalized();
+        }
+
+        Vec3 random_on_hemisphere(const Vec3& normal) {
+            Vec3 on_unit_sphere = random_unit_vector();
+            if (dot(on_unit_sphere, normal) > 0.0)
+                return on_unit_sphere;
+            else
+                return -on_unit_sphere;
+        }       
+
+        static Vec3 cross(Vec3 a, Vec3 b) {
+            float cross [3] = { a.elements[1] * b.elements[2] - a.elements[2] * b.elements[1],
+                                a.elements[2] * b.elements[0] - a.elements[0] * b.elements[2],
+                                a.elements[0] * b.elements[1] - a.elements[1] * b.elements[0]
+                            };
+            return Vec3(cross);
+        }
+
 };
 
 #endif

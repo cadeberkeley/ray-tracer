@@ -11,7 +11,7 @@ class Ray {
         Ray(const Vec3& o, const Vec3& d) {
             origin = o;
             dir = (d-o).normalized();
-            color = newVec3(0.0, 0.0, 0.0);
+            color = Vec3(0.0, 0.0, 0.0);
         }
 
         Ray(const Vec3& o, const Vec3& d, const Vec3& c) {
