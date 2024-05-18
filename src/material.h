@@ -20,7 +20,7 @@ class Material {
 		// true == reflected
 		// false == absorbed
 		virtual bool scatter(const Ray& inc, const Vec3& normal, Ray& out) const {
-			out.color = albedo * color;
+			//out.color = albedo * color - (1-albedo) * inc.color;
 			out.dir = reflect_ray(inc.dir, normal);
 			return true;
 		}
@@ -79,6 +79,41 @@ class Mirror : public Material {
 		Mirror() {
 			albedo = 1.0;
 		}
+		virtual Vec3 reflect_ray(const Vec3& inc, const Vec3& normal) const override {
+			return Vec3::reflected(inc, normal);
+		}
+};
+
+class Metal : public Material {
+	public:
+		Metal() {
+			albedo = 0.8;
+		}
+
+		Metal(const Vec3& c) : Material(c) {
+			albedo = 0.8;
+		}
+		virtual Vec3 reflect_ray(const Vec3& inc, const Vec3& normal) const override {
+			return Vec3::reflected(inc, normal);
+		}
+};
+
+class Emissive : public Material {
+	public:
+		Emissive() {
+			albedo = 1.0;
+		}
+
+		Emissive(const Vec3& c) : Material(c) {
+			albedo = 1.0;
+		}
+
+		virtual bool scatter(const Ray& inc, const Vec3& normal, Ray& out) const override {
+			out.color = color;
+			out.dir = reflect_ray(inc.dir, normal);
+			return false;
+		}
+
 		virtual Vec3 reflect_ray(const Vec3& inc, const Vec3& normal) const override {
 			return Vec3::reflected(inc, normal);
 		}

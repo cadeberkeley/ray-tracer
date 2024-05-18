@@ -18,7 +18,9 @@ using namespace std;
 class Camera {
     public:
 		// Render Settings
-		int max_bounces = 50;
+		int max_bounces = 3;
+		int num_samples = 5;   // Count of random samples for each pixel
+
 
         // Viewport
         float viewport_height = 2.0;
@@ -43,9 +45,13 @@ class Camera {
     		for (int y = 0; y < IMG_HEIGHT; y++) {
         	std::cout << "\rScanlines remaining: " << y << ' ' << std::flush;
         		for (int x = 0; x < IMG_WIDTH; x++) {
-        		    Ray r(origin, lower_left_corner + Vec3((float) x/IMG_WIDTH * viewport_width, (float) y/IMG_HEIGHT * viewport_height, 0.0));
+					Vec3 px_color = Vec3();
+					for (int i = 0; i < num_samples; i++) {
+						Ray r = get_sample_ray(y, x);
+        		    	px_color += ray_color(r, world, max_bounces);
+					}
+					px_color /= num_samples;
         		    
-        		    Vec3 px_color = ray_color(r, world, max_bounces);
                     //if (px_color[0] != 0.5) 
                     //    std::cout << px_color << "\n";
         		    
@@ -68,14 +74,29 @@ class Camera {
 			if (obj_intersect) {
 				Ray next;
 				if (obj_intersect->scatter(r, next)) {
-                	return next.color - ray_color(next, w, depth - 1);
+					return obj_intersect->get_material()->albedo * ray_color(next, w, depth - 1);
+				} else {
+					return next.color;
 				}
+			} else {
+				return w.background_color(r);
 			}
-
-			Vec3 unit_direction = r.dir.normalized();
-    		auto a = 0.5*(unit_direction[1] + 1.0);
-    		return (1.0-a)*Vec3(1.0, 1.0, 1.0) + a*Vec3(0.5, 0.7, 1.0);
     	}
+
+	private:
+		Ray get_sample_ray(int i, int j) {
+			Vec3 sample_offset = sample_square() / IMG_WIDTH * viewport_width;
+			Vec3 grid_offset = Vec3((float) j, (float) i, 0.0) / IMG_WIDTH * viewport_width;
+			return Ray(origin, lower_left_corner + grid_offset + sample_offset);
+		}
+        	
+		// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+		Vec3 sample_square() const {
+			//cout << Vec3::random_value(-0.5, 0.5);
+        	return Vec3(Vec3::random_value(-0.5, 0.5), Vec3::random_value(-0.5, 0.5), 0);
+		}
+
+
 };
 
 #endif

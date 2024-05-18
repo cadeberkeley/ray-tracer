@@ -38,8 +38,11 @@ class World {
         	return nullptr;
     	}
     	
-    	Vec3 background_color() const {
-    		return Vec3(0.15, 0.58, 0.74);
+		// LERP light blue gradient
+    	Vec3 background_color(const Ray& r) const {
+    		Vec3 unit_direction = r.dir.normalized();
+    		auto a = 0.5*(unit_direction[1] + 1.0);
+    		return (1.0-a)*Vec3(1.0, 1.0, 1.0) + a*Vec3(0.5, 0.7, 1.0);
     	}
 };
 
