@@ -17,6 +17,9 @@ using namespace std;
 
 class Camera {
     public:
+		// Render Settings
+		int max_bounces = 50;
+
         // Viewport
         float viewport_height = 2.0;
         const float ASPECT_RATIO = 16.0/9.0;
@@ -42,7 +45,7 @@ class Camera {
         		for (int x = 0; x < IMG_WIDTH; x++) {
         		    Ray r(origin, lower_left_corner + Vec3((float) x/IMG_WIDTH * viewport_width, (float) y/IMG_HEIGHT * viewport_height, 0.0));
         		    
-        		    Vec3 px_color = ray_color(r, world, 1);
+        		    Vec3 px_color = ray_color(r, world, max_bounces);
                     //if (px_color[0] != 0.5) 
                     //    std::cout << px_color << "\n";
         		    
@@ -58,19 +61,20 @@ class Camera {
 
     	Vec3 ray_color(const Ray& r, World& w, int depth) {
     		if (depth == 0) {
-    			return r.color;
+    			//return r.color;
+				return Vec3();
     		}
             const SceneObject* obj_intersect = w.intersect(r);
-			if (obj_intersect == nullptr) {
-                return w.background_color();
-			} else {
+			if (obj_intersect) {
 				Ray next;
 				if (obj_intersect->scatter(r, next)) {
-                	return ray_color(next, w, depth - 1);
-				} else {
-					return next.color;
+                	return next.color - ray_color(next, w, depth - 1);
 				}
-            }
+			}
+
+			Vec3 unit_direction = r.dir.normalized();
+    		auto a = 0.5*(unit_direction[1] + 1.0);
+    		return (1.0-a)*Vec3(1.0, 1.0, 1.0) + a*Vec3(0.5, 0.7, 1.0);
     	}
 };
 

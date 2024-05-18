@@ -4,15 +4,24 @@
 #include "ray.h"
 #include "scene_object.h"
 #include <list>
+#include <queue>
 
 using namespace std;
 
 class World {
+/*
+	private struct SceneObjectComparator {  
+		bool operator()(const SceneObject& a, const SceneObject& b) {  
+			return distance;  
+		}  
+	};
+*/
 	public:
 		list<SceneObject*> scene_objs;
+		// priority_queue<SceneObject*, Vector<SceneObject*>, SceneObjectComparator > scene_objects;
 
 		void add(SceneObject* obj) {
-    		scene_objs.push_front(obj);
+    		scene_objs.push_back(obj);
     	}
 
     	const SceneObject* intersect(const Ray& r) {
@@ -30,7 +39,7 @@ class World {
     	}
     	
     	Vec3 background_color() const {
-    		return Vec3(0.5, 0.5, 0.5);
+    		return Vec3(0.15, 0.58, 0.74);
     	}
 };
 

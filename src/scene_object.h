@@ -22,34 +22,42 @@ class SceneObject {
 
 class ScenePrimitive: public SceneObject {
 	
-
 	public:
-		Material mat;
+		Material* mat;
         Vec3 position;
-		void set_material(Material m) { mat = m; };
-		Material get_material() const { return mat; };
-        ScenePrimitive() {}
+
+        ScenePrimitive() : ScenePrimitive(Vec3(), new Normals()) {}
+
+		ScenePrimitive(const Vec3& p) : ScenePrimitive(p, new Normals()) {}
+
+		ScenePrimitive(const Vec3& p, Material* m) {
+			position = p;
+			mat = m;
+		}
+
+		void set_material(Material* m) { mat = m; };
+		Material* get_material() const { return mat; };
+		
 };
 
 class Sphere: public ScenePrimitive {
 	public:
-		Vec3 center;
 		float radius;
 
-		Sphere() {
+		Sphere() : ScenePrimitive() {
 			radius = 1.0;
-			center = Vec3(0.0, 0.0, 0.0);
-			mat = Normals();
 		}
 
-		Sphere(const float r, const Vec3& c) {
+		Sphere(const Vec3& center, const float r) : ScenePrimitive(center) {
 			radius = r;
-			center = c;
-			mat = Normals();
+		}
+
+		Sphere(const Vec3& center, const float r, Material* m) : ScenePrimitive(center, m) {
+			radius = r;
 		}
 
 		virtual float intersect(const Ray& r) const override {
-			Vec3 beta = r.origin + center;
+			Vec3 beta = r.origin + position;
 
 			float beta_len_squared = beta.norm_squared();
 			float delta_len = beta.dot(r.dir);
@@ -67,13 +75,13 @@ class Sphere: public ScenePrimitive {
 			float t2 = delta_len + delta_to_intersection;
 
 			Vec3 intersect = r.at(t2);
-			Vec3 normal = (intersect - center).normalized();
+			Vec3 normal = (intersect - position).normalized();
 
 			return t2;
 		}
 
 		virtual Vec3 normal_at(const Ray& r) const override {
-			return (r.at(intersect(r)) - center).normalized();
+			return (r.at(intersect(r)) - position).normalized();
 		}
 
 		// Normal coloring for now
@@ -82,7 +90,7 @@ class Sphere: public ScenePrimitive {
 		}
 
 		virtual bool scatter(const Ray& inc, Ray& out) const override {
-			mat.scatter(inc, normal_at(inc), out);
+			mat->scatter(inc, normal_at(inc), out);
 			return true;
 		}
 };

@@ -15,7 +15,6 @@ using namespace std;
 // Sort from z least to greatest (closest to camera to furthest from camera)
 // iterate thru each pixel and trace ray from origin = camera_pos, dir = unit vector of pixel vector - camera vector
 
-
 int main() {
 
     Camera cam;
@@ -23,15 +22,13 @@ int main() {
     // Scene Setup
     World world;
 
-    Normals normals_mat;
-    Sphere s = Sphere(1.0, Vec3(0.0, 0.0, 10.0));
-    s.set_material(normals_mat);
-    world.add(&s);
+    world.add(new Sphere(Vec3(0.0, 0.0, 10.0), 1.0, new Diffuse(Vec3(0.0, 1.0, 0.0))));
+    world.add(new Sphere(Vec3(2.0, 0.0, 10.0), 1.0, new Mirror()));
+    world.add(new Sphere(Vec3(0.0, 10.0, 10.0), 10.0, new Diffuse(Vec3(0.5, 0.5, 0.5))));
 
 
     // Render
     cam.render("build/Camera_world_test.ppm", world);
-    
 
     return 0;
 }

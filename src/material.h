@@ -6,20 +6,26 @@
 
 class Material {
 	public:
-		Material() {}
+		Vec3 color;
+		float albedo;
+		float alpha; // transparency
+
+		Material() {
+		}
+
+		Material(const Vec3& c) {
+			color = c;
+		}
 
 		// true == reflected
 		// false == absorbed
 		virtual bool scatter(const Ray& inc, const Vec3& normal, Ray& out) const {
-			//cout << "default\n";
-			out.color = color * albedo;
+			out.color = albedo * color;
 			out.dir = reflect_ray(inc.dir, normal);
 			return true;
 		}
 
-		virtual Vec3 reflect_ray(const Vec3& inc, const Vec3& normal) const {
-			return Vec3();
-		}
+		virtual Vec3 reflect_ray(const Vec3& inc, const Vec3& normal) const = 0;
 
 		void set_albedo(const float a) {
 			albedo = a;
@@ -33,20 +39,15 @@ class Material {
 			color = c;
 		}
 
-		float albedo;
-		Vec3 color;
-		float alpha; // transparency
 };
 
 class Normals : public Material {
 	public:
 		Normals() {
-			cout << "n";
 			albedo = 1.0;
 		}
 
 		virtual bool scatter(const Ray& inc, const Vec3& normal, Ray& out) const override {
-			cout << "Normals\n";
 			out.color = normal;
 			return false;
 		}
@@ -59,6 +60,11 @@ class Normals : public Material {
 class Diffuse : public Material {
 	public:
 		Diffuse() {
+			albedo = 0.5;
+			alpha = 0.0;
+		}
+
+		Diffuse(const Vec3& c) : Material(c) {
 			albedo = 0.5;
 			alpha = 0.0;
 		}
