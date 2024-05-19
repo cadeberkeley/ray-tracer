@@ -30,6 +30,11 @@ class Ray {
             return origin + t * dir;
         }
 
+        friend std::ostream & operator<<(std::ostream& os, const Ray& r) {
+            os << "Ray origin: " << r.origin << "; direction: " << r.dir;
+            return os;
+        }
+
 };
 
 #endif

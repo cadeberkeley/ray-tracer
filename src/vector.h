@@ -172,7 +172,7 @@ template <typename T, size_t N> class Vector {
             for (int i = 0; i < N-1; i++) {
                 os << v.elements[i] << ", ";
             }
-            os << v.elements[N-1] << ")" << std::endl;
+            os << v.elements[N-1] << ")";
             return os;
         }
 

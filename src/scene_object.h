@@ -58,7 +58,7 @@ class Sphere: public ScenePrimitive {
 		}
 
 		virtual float intersect(const Ray& r) const override {
-			Vec3 beta = r.origin + position;
+			Vec3 beta = position - r.origin;
 
 			float beta_len_squared = beta.norm_squared();
 			float delta_len = beta.dot(r.dir);
@@ -75,7 +75,7 @@ class Sphere: public ScenePrimitive {
 			float t1 = delta_len - delta_to_intersection;
 			float t2 = delta_len + delta_to_intersection;
 
-			Vec3 intersect = r.at(t2);
+			Vec3 intersect = r.at(t1);
 			Vec3 normal = (intersect - position).normalized();
 
 			return t1;

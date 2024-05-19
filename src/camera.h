@@ -46,11 +46,17 @@ class Camera {
         	std::cout << "\rScanlines remaining: " << y << ' ' << std::flush;
         		for (int x = 0; x < IMG_WIDTH; x++) {
 					Vec3 px_color = Vec3();
-					for (int i = 0; i < num_samples; i++) {
-						Ray r = get_sample_ray(y, x);
-        		    	px_color += ray_color(r, world, max_bounces);
-					}
-					px_color /= num_samples;
+					/*if (x == 200 || y == 180) {
+						px_color = Vec3(1.0, 0.0, 0.0);
+					} else if (x % 10 == 0 || y % 10 == 0) {
+						px_color = Vec3(0.0, 0.0, 0.0);
+					} else {*/
+						for (int i = 0; i < num_samples; i++) {
+							Ray r = get_sample_ray(y, x);
+        		    		px_color += ray_color(r, world, max_bounces, x, y);
+						}
+						px_color /= num_samples;
+					//}
         		    
                     //if (px_color[0] != 0.5) 
                     //    std::cout << px_color << "\n";
@@ -65,7 +71,10 @@ class Camera {
 
     	}
 
-    	Vec3 ray_color(const Ray& r, World& w, int depth) {
+    	Vec3 ray_color(const Ray& r, World& w, int depth, int x, int y) {
+			if (x < 205 && x > 200 && y < 185 && y > 180) {
+				cout << "\n" << r;
+			}
     		if (depth == 0) {
     			//return r.color;
 				return Vec3();
@@ -76,9 +85,10 @@ class Camera {
 			if (is_intersect) {
 				Ray next;
 				if (obj_intersect->scatter(r, intersection_point, next)) {
-					return obj_intersect->get_material()->albedo * ray_color(next, w, depth - 1);
+					
+					return obj_intersect->get_material()->albedo * ray_color(next, w, depth - 1, x, y);
 				} else {
-					return next.color;
+					return Vec3();
 				}
 			} else {
 				return w.background_color(r);
@@ -87,14 +97,16 @@ class Camera {
 
 	private:
 		Ray get_sample_ray(int i, int j) {
-			Vec3 sample_offset = sample_square() / IMG_WIDTH * viewport_width;
-			Vec3 grid_offset = Vec3((float) j, (float) i, 0.0) / IMG_WIDTH * viewport_width;
-			return Ray(origin, lower_left_corner + grid_offset + sample_offset);
+			Vec3 sample_offset = sample_square() / (float) IMG_WIDTH * viewport_width;
+			Vec3 grid_offset = Vec3((float) j, (float) i, 0.0) / (float)IMG_WIDTH * viewport_width;
+			//cout << origin;
+			//cout << lower_left_corner;
+			//cout << grid_offset;
+			return Ray(origin, lower_left_corner + grid_offset/* + sample_offset*/);
 		}
         	
 		// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
 		Vec3 sample_square() const {
-			//cout << Vec3::random_value(-0.5, 0.5);
         	return Vec3(Vec3::random_value(-0.5, 0.5), Vec3::random_value(-0.5, 0.5), 0);
 		}
 
