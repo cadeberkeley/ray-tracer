@@ -73,12 +73,8 @@ template <typename T, size_t N> class Vector {
         }
 
 
-        T dot(Vector<T, N> other) const {
-            return Vector<T, N>::dot(*this, other);
-        }
-
-        Vector cross(Vector<T, N> other) {
-            return Vector<T, N>::cross(*this, other);
+        T dot(Vector other) const {
+            return Vector::dot(*this, other);
         }
 
         Vector normalized() const {
@@ -96,6 +92,10 @@ template <typename T, size_t N> class Vector {
             }
 
             return sum;
+        }
+
+        Vector project_onto(Vector other) {
+            return (this->dot(other) / other.norm_squared()) * other;
         }
         
         /* Override common mathematical operators */
@@ -222,6 +222,10 @@ class Vec3 : public Vector<float, 3UL> {
                                 a.elements[0] * b.elements[1] - a.elements[1] * b.elements[0]
                             };
             return Vec3(cross);
+        }
+
+        Vec3 cross(Vec3 other) {
+            return Vec3::cross(*this, other);
         }
 
 };

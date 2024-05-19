@@ -20,18 +20,18 @@ using namespace std;
 int main() {
 
     Camera cam;
-    cam.max_bounces = 3;
+    cam.max_bounces = 1;
     cam.num_samples = 1;
         
     // Scene Setup
     World world;
 
-    world.add(new Sphere(Vec3(0.0, 0.0, 5.0), 0.5, new Diffuse(Vec3(1.0, 0.0, 0.0))));
+    world.add(new Sphere(Vec3(0.0, 0.0, 1.0), 0.5, new Diffuse(Vec3(1.0, 0.0, 0.0))));
     //world.add(new Sphere(Vec3(0.0, 2.5, 5.0), 2.0, new Metal(Vec3(1.0, 0.0, 0.0))));
 
     //world.add(new Sphere(Vec3(3.0, 0.0, 12.0), 1.0, new Metal(Vec3(0.8, 0.8, 0.8))));
     //world.add(new Sphere(Vec3(0.0, 100.5, 5.0), 100.5, new Diffuse(Vec3(1.0, 0.0, 0.0))));
-    world.add(new Sphere(Vec3(0.0, 100.5, 5.0), 100.5, new Metal(Vec3(1.0, 0.0, 0.0))));
+    //world.add(new Sphere(Vec3(0.0, 100.5, 5.0), 100.5, new Metal(Vec3(1.0, 0.0, 0.0))));
 
     //world.add(new Sphere(Vec3(-10.0, -10.0, 15.0), 10.0, new Emissive(Vec3(1.0, 1.0, 1.0))));
 

@@ -72,9 +72,9 @@ class Camera {
     	}
 
     	Vec3 ray_color(const Ray& r, World& w, int depth, int x, int y) {
-			if (x < 205 && x > 200 && y < 185 && y > 180) {
-				cout << "\n" << r;
-			}
+			//if (x < 205 && x > 200 && y < 185 && y > 180) {
+			//	cout << "\n" << r;
+			//}
     		if (depth == 0) {
     			//return r.color;
 				return Vec3();
@@ -82,6 +82,7 @@ class Camera {
             SceneObject* obj_intersect = nullptr;
 			Vec3 intersection_point = Vec3();
 			bool is_intersect = w.intersect(r, obj_intersect, intersection_point);
+			//cout << is_intersect;
 			if (is_intersect) {
 				Ray next;
 				if (obj_intersect->scatter(r, intersection_point, next)) {

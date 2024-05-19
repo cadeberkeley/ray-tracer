@@ -58,25 +58,21 @@ class Sphere: public ScenePrimitive {
 		}
 
 		virtual float intersect(const Ray& r) const override {
-			Vec3 beta = position - r.origin;
-
-			float beta_len_squared = beta.norm_squared();
-			float delta_len = beta.dot(r.dir);
-
-			if (delta_len < 0) {
+			Vec3 beta = r.origin - position;
+			float d = beta.dot(r.dir);
+			if (d < 0) {
+				return -1;
+			}
+			Vec3 delta = beta.project_onto(r.dir);
+			Vec3 gamma = beta - delta;
+			
+			if (gamma.norm_squared() > radius * radius) {
 				return -1;
 			}
 
-			float delta_len_squared = delta_len * delta_len;
-			float center_to_delta_squared = beta_len_squared - delta_len_squared;
-			if (center_to_delta_squared > radius * radius) return -1;
-			float delta_to_intersection = sqrt(radius * radius - center_to_delta_squared);
-
-			float t1 = delta_len - delta_to_intersection;
-			float t2 = delta_len + delta_to_intersection;
-
-			Vec3 intersect = r.at(t1);
-			Vec3 normal = (intersect - position).normalized();
+			float l1 = sqrt(radius * radius - gamma.norm_squared());
+			float c = sqrt(beta.norm_squared() - gamma.norm_squared());
+			float t1 = c - l1;
 
 			return t1;
 		}
