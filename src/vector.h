@@ -148,6 +148,13 @@ template <typename T, size_t N> class Vector {
             return v;
         }
 
+        friend Vector operator*(Vector a, Vector b) {
+            for (int i = 0; i < N; i++) {
+                a[i] *= b[i];
+            }
+            return a;
+        }
+
         Vector& operator/=(const T scalar) {
             for (int i = 0; i < N; i++) {
                 elements[i] /= scalar;

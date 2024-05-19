@@ -18,8 +18,8 @@ using namespace std;
 class Camera {
     public:
 		// Render Settings
-		int max_bounces = 3;
-		int num_samples = 5;   // Count of random samples for each pixel
+		int max_bounces = 1;
+		int num_samples = 8;   // Count of random samples for each pixel
 
 
         // Viewport
@@ -70,10 +70,12 @@ class Camera {
     			//return r.color;
 				return Vec3();
     		}
-            const SceneObject* obj_intersect = w.intersect(r);
-			if (obj_intersect) {
+            SceneObject* obj_intersect = nullptr;
+			Vec3 intersection_point = Vec3();
+			bool is_intersect = w.intersect(r, obj_intersect, intersection_point);
+			if (is_intersect) {
 				Ray next;
-				if (obj_intersect->scatter(r, next)) {
+				if (obj_intersect->scatter(r, intersection_point, next)) {
 					return obj_intersect->get_material()->albedo * ray_color(next, w, depth - 1);
 				} else {
 					return next.color;

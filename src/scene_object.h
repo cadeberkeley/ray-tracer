@@ -18,7 +18,7 @@ class SceneObject {
 
 		virtual float intersect(const Ray& r) const = 0;
 		virtual Vec3 normal_at(const Ray& r) const = 0;
-		virtual bool scatter(const Ray& inc, Ray& out) const = 0;
+		virtual bool scatter(const Ray& inc, const Vec3& intersection_point, Ray& out) const = 0;
 		void set_material(Material* m) { mat = m; };
 		Material* get_material() const { return mat; };
 
@@ -85,7 +85,8 @@ class Sphere: public ScenePrimitive {
 			return (r.at(intersect(r)) - position).normalized();
 		}
 
-		virtual bool scatter(const Ray& inc, Ray& out) const override {
+		virtual bool scatter(const Ray& inc, const Vec3& intersection_point, Ray& out) const override {
+			out.origin = intersection_point;
 			return mat->scatter(inc, normal_at(inc), out);
 		}
 };
